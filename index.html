@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Alunos</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .form-container {
+            margin-bottom: 20px;
+        }
+        label {
+            margin-right: 10px;
+        }
+        input {
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <h1>Cadastro de Alunos e Notas</h1>
+    
+    <div class="form-container">
+        <label for="nome">Nome do Aluno:</label>
+        <input type="text" id="nome" placeholder="Nome do aluno">
+    </div>
+    
+    <div class="form-container">
+        <label for="nota">Nota do Aluno:</label>
+        <input type="number" id="nota" placeholder="Nota (0-10)" min="0" max="10">
+    </div>
+
+    <button onclick="adicionarAluno()">Adicionar Aluno</button>
+    
+    <h2>Lista de Alunos</h2>
+    <table id="alunosTabela" border="1">
+        <tr>
+            <th>Nome</th>
+            <th>Nota</th>
+        </tr>
+    </table>
+
+    <br><br>
+    <button onclick="gerarExcel()">Gerar Excel</button>
+
+    <script>
+        let alunos = [];
+
+        function adicionarAluno() {
+            const nome = document.getElementById("nome").value;
+            const nota = parseFloat(document.getElementById("nota").value);
+            
+            if(nome && !isNaN(nota) && nota >= 0 && nota <= 10) {
+                alunos.push({ nome, nota });
+
+                // Atualiza a tabela
+                const tabela = document.getElementById("alunosTabela");
+                const novaLinha = tabela.insertRow();
+                novaLinha.innerHTML = `<td>${nome}</td><td>${nota}</td>`;
+
+                // Limpa os campos
+                document.getElementById("nome").value = '';
+                document.getElementById("nota").value = '';
+            } else {
+                alert("Por favor, insira um nome válido e uma nota entre 0 e 10.");
+            }
+        }
+
+        function gerarExcel() {
+            // Envia os dados para o backend
+            fetch('/gerar-excel', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ alunos })
+            })
+            .then(response => response.blob())
+            .then(blob => {
+                const link = document.createElement('a');
+                link.href = URL.createObjectURL(blob);
+                link.download = 'alunos_notas.xlsx';
+                link.click();
+            })
+            .catch(error => console.error('Erro ao gerar o Excel:', error));
+        }
+    </script>
+
+</body>
+</html>
