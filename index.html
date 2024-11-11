@@ -30,6 +30,11 @@
     </div>
     
     <div class="form-container">
+        <label for="Serie">Serie do Aluno:</label>
+        <input type="nome" id="Serie" placeholder="Serie do aluno">
+    </div>
+
+    <div class="form-container">
         <label for="nota">Nota do Aluno:</label>
         <input type="number" id="nota" placeholder="Nota (0-10)" min="0" max="10">
     </div>
@@ -40,6 +45,7 @@
     <table id="alunosTabela" border="1">
         <tr>
             <th>Nome</th>
+            <th>Serie</th>
             <th>Nota</th>
         </tr>
     </table>
@@ -52,10 +58,11 @@
 
         function adicionarAluno() {
             const nome = document.getElementById("nome").value;
+            const serie = document.getElementById("serie").value;
             const nota = parseFloat(document.getElementById("nota").value);
             
             if(nome && !isNaN(nota) && nota >= 0 && nota <= 10) {
-                alunos.push({ nome, nota });
+                alunos.push({ nome, serie, nota });
 
                 // Atualiza a tabela
                 const tabela = document.getElementById("alunosTabela");
