@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-br">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,32 +9,40 @@
         body {
             font-family: Arial, sans-serif;
             margin: 20px;
-            background-image:url('imagens/fundo.png');
-            
+            background-image: url('imagens/fundo.png');
+            background-repeat: no-repeat;
         }
+
         .form-container {
             margin-bottom: 20px;
         }
+
         label {
             margin-right: 10px;
         }
+
         input {
             margin-right: 10px;
         }
     </style>
 </head>
-<body>
 
-    <h1>Cadastro de Alunos e Notas</h1>
-    
+<body>
+    <h1>Cadastro de Alunos, Notas e Turmas</h1>
+
     <div class="form-container">
         <label for="nome">Nome do Aluno:</label>
         <input type="text" id="nome" placeholder="Nome do aluno">
     </div>
-    
+
     <div class="form-container">
-        <label for="Serie">Serie do Aluno:</label>
-        <input type="nome" id="Serie" placeholder="Serie do aluno">
+        <label for="serie">Série do Aluno:</label>
+        <input type="text" id="serie" placeholder="Série do aluno">
+    </div>
+
+    <div class="form-container">
+        <label for="turma">Turma do Aluno:</label>
+        <input type="text" id="turma" placeholder="Turma do aluno">
     </div>
 
     <div class="form-container">
@@ -42,12 +51,13 @@
     </div>
 
     <button onclick="adicionarAluno()">Adicionar Aluno</button>
-    
+
     <h2>Lista de Alunos</h2>
     <table id="alunosTabela" border="1">
         <tr>
             <th>Nome</th>
-            <th>Serie</th>
+            <th>Série</th>
+            <th>Turma</th>
             <th>Nota</th>
         </tr>
     </table>
@@ -61,26 +71,28 @@
         function adicionarAluno() {
             const nome = document.getElementById("nome").value;
             const serie = document.getElementById("serie").value;
+            const turma = document.getElementById("turma").value;
             const nota = parseFloat(document.getElementById("nota").value);
-            
-            if(nome && !isNaN(nota) && nota >= 0 && nota <= 10) {
-                alunos.push({ nome, serie, nota });
+
+            if (nome && serie && turma && !isNaN(nota) && nota >= 0 && nota <= 10) {
+                alunos.push({ nome, serie, turma, nota });
 
                 // Atualiza a tabela
                 const tabela = document.getElementById("alunosTabela");
                 const novaLinha = tabela.insertRow();
-                novaLinha.innerHTML = `<td>${nome}</td><td>${nota}</td>`;
+                novaLinha.innerHTML = `<td>${nome}</td><td>${serie}</td><td>${turma}</td><td>${nota}</td>`;
 
                 // Limpa os campos
                 document.getElementById("nome").value = '';
+                document.getElementById("serie").value = '';
+                document.getElementById("turma").value = '';
                 document.getElementById("nota").value = '';
             } else {
-                alert("Por favor, insira um nome válido e uma nota entre 0 e 10.");
+                alert("Por favor, insira um nome, série, turma e uma nota válida entre 0 e 10.");
             }
         }
 
         function gerarExcel() {
-            // Envia os dados para o backend
             fetch('/gerar-excel', {
                 method: 'POST',
                 headers: {
@@ -88,16 +100,14 @@
                 },
                 body: JSON.stringify({ alunos })
             })
-            .then(response => response.blob())
-            .then(blob => {
-                const link = document.createElement('a');
-                link.href = URL.createObjectURL(blob);
-                link.download = 'alunos_notas.xlsx';
-                link.click();
-            })
-            .catch(error => console.error('Erro ao gerar o Excel:', error));
+                .then(response => response.blob())
+                .then(blob => {
+                    const link = document.createElement('a');
+                    link.href = URL.createObjectURL(blob);
+                    link.download = 'alunos_notas.xlsx';
+                    link.click();
+                })
+                .catch(error => console.error('Erro ao gerar o Excel:', error));
         }
     </script>
-
 </body>
-</html>
